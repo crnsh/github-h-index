@@ -29,7 +29,7 @@ function calculateHIndex(citations: number[]): number {
   citations.sort((a, b) => b - a);
 
   let h = 0;
-  while (h < citations.length && citations[h] > h) {
+  while (h < citations.length && citations[h] as number > h) {
     h++;
   }
   

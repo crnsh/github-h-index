@@ -15,7 +15,7 @@ import {
 export function ModeToggle() {
   const { setTheme, theme } = useTheme()
 
-  function clickHandler (e) {
+  function clickHandler (e: React.MouseEvent<any>) {
     if (theme == "dark") {
       setTheme("light")
     }
