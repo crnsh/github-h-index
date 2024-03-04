@@ -23,6 +23,7 @@ interface Repository {
   name: string;
   description: string | null;
   stargazers_count: number;
+  owner: { login: string }
 }
 
 function calculateHIndex(citations: number[]): number {
@@ -106,7 +107,9 @@ function OutputView( { repositories, isLoading } : { repositories: Repository[],
           <TableBody>
           {repositories.map((repo) => (
             <TableRow key={repo.name}>
-              <TableCell className="font-medium">{repo.name}</TableCell>
+              <TableCell className="font-medium">
+                <a className="text-blue-500" href={`https://github.com/${repo.owner.login}/${repo.name}`}>{repo.name}</a>
+              </TableCell>
               <TableCell>{repo.description}</TableCell>
               <TableCell className="text-right">{repo.stargazers_count}</TableCell>
             </TableRow>
@@ -122,7 +125,6 @@ function OutputView( { repositories, isLoading } : { repositories: Repository[],
       </div>
     </div>
     )
-
   )
 }
 
@@ -133,43 +135,91 @@ export default function Home() {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [fetchKey, setFetchKey] = useState<number>(0);
 
-const fetchRepositories = async () => {
-  setRepositories([]);
-  setIsLoading(true);
-  setFetchKey(prevKey => prevKey + 1); // Update the key to force re-render
-
-  let page = 1;
-  const perPage = 100; // Max per page allowed by GitHub API
-  let allRepositories: Repository[] = [];
-  let fetchMore = true;
-
-  while (fetchMore) {
-    const url = `https://api.github.com/users/${username}/repos?per_page=${perPage}&page=${page}`;
-    try {
-      const response = await fetch(url);
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+  const fetchAllData = async () => {
+    setRepositories([]);
+    setIsLoading(true);
+    setFetchKey(prevKey => prevKey + 1); // Update the key to force re-render
+  
+    const fetchOrgRepos = async (org: any) => {
+      let page = 1;
+      let fetchMore = true;
+      const orgRepos = [];
+  
+      while (fetchMore) {
+        const url = `https://api.github.com/orgs/${org}/repos?per_page=100&page=${page}`;
+        try {
+          const response = await fetch(url);
+          if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+          }
+          const repos = await response.json();
+          fetchMore = repos.length === 100;
+          orgRepos.push(...repos);
+          page++;
+        } catch (error) {
+          console.error(`Fetching organization (${org}) repositories failed:`, error);
+          fetchMore = false;
+        }
       }
-      const repos: Repository[] = await response.json();
-      
-      // If we get fewer repos than we requested, it's the last page
-      fetchMore = repos.length === perPage;
-      
-      allRepositories = [...allRepositories, ...repos];
-      page++;
-    } catch (error) {
-      console.error('Fetching repositories failed:', error);
-      fetchMore = false; // Stop fetching if there's an error
-    }
-  }
-
-  setRepositories(allRepositories);
-  setIsLoading(false);
-};
+  
+      return orgRepos;
+    };
+  
+    const fetchUserAndOrgRepos = async () => {
+      let allRepositories = [];
+      let page = 1;
+      let fetchMore = true;
+  
+      // Fetch user repositories
+      while (fetchMore) {
+        const url = `https://api.github.com/users/${username}/repos?per_page=100&page=${page}`;
+        try {
+          const response = await fetch(url);
+          if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+          }
+          const repos = await response.json();
+          fetchMore = repos.length === 100;
+          allRepositories.push(...repos);
+          page++;
+        } catch (error) {
+          console.error('Fetching user repositories failed:', error);
+          fetchMore = false;
+        }
+      }
+  
+      // Fetch organizations
+      try {
+        const orgsResponse = await fetch(`https://api.github.com/users/${username}/orgs`);
+        if (!orgsResponse.ok) {
+          throw new Error(`HTTP error! status: ${orgsResponse.status}`);
+        }
+        const orgs = await orgsResponse.json();
+  
+        console.log(orgs)
+  
+        // Fetch repositories for each organization
+        for (const org of orgs) {
+          const orgRepos = await fetchOrgRepos(org.login);
+          allRepositories.push(...orgRepos);
+        }
+      } catch (error) {
+        console.error('Fetching organizations failed:', error);
+      }
+  
+      return allRepositories;
+    };
+  
+    const allRepos = await fetchUserAndOrgRepos();
+    setRepositories(allRepos);
+    setIsLoading(false);
+  };
+  
+  
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    fetchRepositories();
+    fetchAllData();
   };
 
   return (
