@@ -186,7 +186,7 @@ const fetchRepositories = async () => {
         <div className="space-y-2 text-center">
           <h1 className="text-3xl font-bold tracking-tight">GitHub H-Index</h1>
           <p className="text-gray-500 dark:text-gray-400 max-w-lg">
-          The user's <a href="https://en.wikipedia.org/wiki/H-index" className=" text-blue-500">h-index</a> is a "productivity score" based on how many of their repositories get a certain number of stars. If their h-index is 5, it means they have 5 projects that each got at least 5 stars.
+          The user&apos;s <a href="https://en.wikipedia.org/wiki/H-index" className=" text-blue-500">h-index</a> is a productivity score based on how many of their repositories get a certain number of stars. If their h-index is 5, it means they have 5 projects that each got at least 5 stars.
           </p>
         </div>
         <form onSubmit={handleSubmit} className="mx-auto max-w-xs space-y-4">
