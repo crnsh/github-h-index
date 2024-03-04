@@ -5,17 +5,11 @@ import { Moon, Sun } from "lucide-react"
 import { useTheme } from "next-themes"
  
 import { Button } from "@/components/ui/button"
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
  
 export function ModeToggle() {
   const { setTheme, theme } = useTheme()
 
-  function clickHandler (e: React.MouseEvent<any>) {
+  function clickHandler (e: React.MouseEvent<HTMLButtonElement>) {
     if (theme == "dark") {
       setTheme("light")
     }

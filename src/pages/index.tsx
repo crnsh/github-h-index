@@ -29,7 +29,7 @@ function calculateHIndex(citations: number[]): number {
   citations.sort((a, b) => b - a);
 
   let h = 0;
-  while (h < citations.length && citations[h] as number > h) {
+  while (h < citations.length && citations[h]! > h) {
     h++;
   }
   
@@ -38,53 +38,80 @@ function calculateHIndex(citations: number[]): number {
 
 function OutputView( { repositories, isLoading } : { repositories: Repository[], isLoading: boolean } ) {
 
-  let totalStars = repositories.reduce((sum, x) => sum + x.stargazers_count, 0)
+  const totalStars = repositories.reduce((sum, x) => sum + x.stargazers_count, 0)
 
   return (
-    <div className="flex flex-col">
+    isLoading ? (<div className="flex flex-col max-h-[50vh]">
       <div className="px-4 pt-4 w-full flex flex-row place-content-between">
-        <h3 className="scroll-m-20 text-2xl font-semibold tracking-tight">
-          H-Index : {calculateHIndex(repositories.map((repo) => repo.stargazers_count))}
-        </h3>
-        <h3 className="scroll-m-20 text-2xl font-semibold tracking-tight">
-          Total Stars : {totalStars}
-        </h3>
+        <h2 className="scroll-m-20 text-xl font-semibold tracking-tight">
+          H-Index: {calculateHIndex(repositories.map((repo) => repo.stargazers_count))}
+        </h2>
+        <h2 className="scroll-m-20 text-xl font-semibold tracking-tight">
+          All Stars: {totalStars}
+        </h2>
       </div>
       <Separator className="my-4" />
-      <div className=" max-h-[700px] w-full custom-gray-scroll overflow-autocenter max-w-4xl space-x-4">
-        <Table>
+      <div className=" w-full custom-gray-scroll overflow-autocenter max-w-4xl space-x-4">
+        <Table key='now'>
           <TableHeader className="max-w">
             <TableRow>
-              <TableHead className="w-[200px]">Name</TableHead>
+              <TableHead className="w-[50px] overflow-auto">Name</TableHead>
               <TableHead>Description</TableHead>
               <TableHead className="text-right">Stars</TableHead>
             </TableRow>
           </TableHeader>
-          {isLoading ?
-          ([1,2,3,4,5,6].map(() => (
-            <TableBody>
+          <TableBody>
+            {[1,2,3,4,5,6].map(() => (
               <TableRow key='t'>
                 <TableCell className="font-medium">
-                  <Skeleton className="h-4 w-[150px]" />
+                  <Skeleton className="h-5" />
                 </TableCell>
                 <TableCell>
-                  <Skeleton className="h-4 w-[400px]" />
+                  <Skeleton className="h-5" />
                 </TableCell>
                 <TableCell className="flex justify-end">
-                  <Skeleton className="h-4 w-10" />
+                  <Skeleton className="h-5" />
                 </TableCell>
-              </TableRow>    
-            </TableBody>
-            ))) : 
-            (repositories.map((repo) => (
-            <TableBody>
-              <TableRow key={repo.name}>
-                <TableCell className="font-medium">{repo.name}</TableCell>
-                <TableCell>{repo.description}</TableCell>
-                <TableCell className="text-right">{repo.stargazers_count}</TableCell>
-              </TableRow>
-            </TableBody>
-            )))}
+              </TableRow>   
+            ))}
+          </TableBody>
+          <TableFooter>
+            <TableRow>
+              <TableCell colSpan={2}>Total</TableCell>
+              <TableCell className="text-right">{totalStars}</TableCell>
+            </TableRow>
+          </TableFooter>
+        </Table>
+      </div>
+    </div>) : (
+    <div className="flex flex-col max-h-[50vh]">
+      <div className="px-4 pt-4 w-full flex flex-row place-content-between">
+        <h2 className="scroll-m-20 text-xl font-semibold tracking-tight">
+          H-Index: {calculateHIndex(repositories.map((repo) => repo.stargazers_count))}
+        </h2>
+        <h2 className="scroll-m-20 text-xl font-semibold tracking-tight">
+          All Stars: {totalStars}
+        </h2>
+      </div>
+      <Separator className="my-4" />
+      <div className=" w-full custom-gray-scroll overflow-autocenter max-w-4xl space-x-4">
+        <Table key='not-now'>
+          <TableHeader className="max-w">
+            <TableRow>
+              <TableHead className="w-[50px] overflow-auto">Name</TableHead>
+              <TableHead>Description</TableHead>
+              <TableHead className="text-right">Stars</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+          {repositories.map((repo) => (
+            <TableRow key={repo.name}>
+              <TableCell className="font-medium">{repo.name}</TableCell>
+              <TableCell>{repo.description}</TableCell>
+              <TableCell className="text-right">{repo.stargazers_count}</TableCell>
+            </TableRow>
+          ))}
+          </TableBody>
           <TableFooter>
             <TableRow>
               <TableCell colSpan={2}>Total</TableCell>
@@ -94,6 +121,7 @@ function OutputView( { repositories, isLoading } : { repositories: Repository[],
         </Table>
       </div>
     </div>
+    )
 
   )
 }
@@ -145,7 +173,7 @@ const fetchRepositories = async () => {
   };
 
   return (
-    <div key="1" className="px-4 py-6 md:py-12 lg:py-16 flex flex-col min-h-screen">
+    <div key="1" className="px-4 pb-4 pt-10 flex flex-col min-h-screen">
       <div className="space-y-5 flex flex-col items-center">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -0.5 32 32" height={100} width={100} shape-rendering="crispEdges">
           <metadata>Made with Pixels to Svg https://codepen.io/shshaw/pen/XbxvNj</metadata>
@@ -159,17 +187,14 @@ const fetchRepositories = async () => {
           <h1 className="text-3xl font-bold tracking-tight">GitHub H-Index</h1>
           <p className="text-gray-500 dark:text-gray-400">Enter a GitHub username to see h-index</p>
         </div>
-        <form onSubmit={handleSubmit} className="mx-auto max-w-sm space-y-4">
-          <div className="grid grid-cols-5 gap-4 w-full">
+        <form onSubmit={handleSubmit} className="mx-auto max-w-xs space-y-4">
+          <div className="flex flex-row justify-items-end gap-2 w-full">
             <Input 
-              className="col-span-3" 
               id="username" 
               placeholder="Enter a username" 
               onChange={e => setUsername(e.target.value)}
             />
-            <div>
-              <Button type="submit" className="w-full">Submit</Button>
-            </div>
+            <Button type="submit" className="">Go</Button>
             <ModeToggle/>
           </div>
         </form>
