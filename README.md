@@ -11,7 +11,7 @@
 <hr>
 
 # GitHub H-Index
-Fun little 1 hour project I hacked up.
+Fun little 1 hour project I hacked up and [tweeted about](https://twitter.com/crnshx/status/1764744046235242752)!
 
 The user's [h-index](https://google.com) is a productivity score based on how many of their repositories get a certain number of stars. If their h-index is 5, it means they have 5 projects that each got at least 5 stars.
 
