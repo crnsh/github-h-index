@@ -225,7 +225,7 @@ export default function Home() {
   return (
     <div key="1" className="px-4 pb-4 pt-10 flex flex-col min-h-screen">
       <div className="space-y-5 flex flex-col items-center">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -0.5 32 32" height={100} width={100} shape-rendering="crispEdges">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -0.5 32 32" height={100} width={100} shapeRendering="crispEdges">
           <metadata>Made with Pixels to Svg https://codepen.io/shshaw/pen/XbxvNj</metadata>
           <path stroke="#000000" d="M16 1h2M15 2h1M18 2h2M14 3h1M20 3h2M13 4h1M22 4h2M12 5h1M24 5h2M11 6h1M26 6h1M10 7h1M26 7h1M9 8h1M25 8h1M8 9h1M24 9h1M7 10h1M24 10h1M6 11h1M24 11h1M6 12h1M25 12h1M5 13h1M25 13h1M5 14h1M26 14h1M4 15h1M26 15h1M4 16h1M27 16h1M3 17h1M27 17h1M3 18h1M28 18h1M3 19h3M28 19h1M5 20h1M27 20h1M5 21h1M18 21h1M27 21h1M4 22h1M17 22h2M26 22h1M4 23h1M17 23h1M19 23h1M26 23h1M3 24h1M16 24h1M19 24h1M25 24h1M3 25h1M16 25h1M20 25h1M25 25h1M3 26h3M15 26h1M20 26h1M24 26h1M6 27h2M15 27h1M21 27h1M24 27h1M8 28h2M14 28h1M21 28h3M10 29h2M14 29h1M12 30h3" />
           <path stroke="#3368dc" d="M16 2h2M15 3h5M14 4h8M13 5h11M12 6h1M15 6h11M11 7h2M17 7h9M10 8h2M19 8h6M9 9h3M21 9h3M8 10h3M7 11h4M7 12h3M6 13h3M6 14h3M5 15h3M5 16h3M10 16h1M4 17h3M12 17h1M4 18h3M14 18h1M16 19h1M18 20h1M19 22h1M20 24h1M21 26h1" />
